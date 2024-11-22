@@ -1,0 +1,72 @@
+.control-panel-container{
+    position: absolute;
+    margin-top: 0px;
+    margin-left: 0px;
+    top: 5px;
+    left: 5px;
+    height: 99vh;
+    width: 25vw;
+
+    border: 1px solid white;
+    overflow: auto;
+}
+.query-section{
+    position:absolute;
+    margin-left:5px ;
+    margin-right: 5px;
+    top: 10px;
+    height: 20vh;
+    width: 24.4vw;
+    border: 1px solid red;
+    display: flex;
+    justify-content: center;
+}
+.create-section{
+    position:absolute;
+    margin-left:5px ;
+    margin-right: 5px;
+    top: calc(20px + 20vh);
+    height: 20vh;
+    width: 24.4vw;
+    
+    display: flex;
+    justify-content: center;
+    border: 1px solid rgb(111, 0, 255);
+}
+.modify-section{
+    position: absolute;
+    margin-left:5px ;
+    margin-right: 5px;
+    top: calc(30px + 40vh);
+    height: 20vh;
+    width: 24.4vw;
+    display: flex;
+    justify-content: center;
+    border: 1px solid rgb(21, 255, 0);
+}
+.delete-section{
+    position:absolute;
+    margin-left:5px ;
+    margin-right: 5px;
+    top: calc(40px + 60vh);
+    height: 20vh;
+    width: 24.4vw;
+    display: flex;
+    justify-content: center;
+    border: 1px solid rgb(0, 255, 195);
+}
+.control-panel-button{
+    position:absolute;
+    margin-left:5px ;
+    margin-right: 5px;
+    top: calc(50px + 80vh);
+    height:13vh;
+    width: 24.4vw;
+    display: flex;
+    justify-content: center;
+    background-color: rgb(43, 46, 46);
+    border: 1px solid rgb(255, 255, 255);
+}
+control-panel-button:hover{
+    background-color: burlywood;
+}

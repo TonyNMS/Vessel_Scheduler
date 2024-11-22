@@ -1,0 +1,18 @@
+/* DisplayPanel.css */
+.timeline-container {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  }
+  
+.react-calendar-timeline {
+  width: 100%;
+  height: 100%;
+}
+.load-button{
+  bottom: 0px;
+  background-color: black;
+  border-color: crimson;
+  border-style: dotted;
+  z-index: 1000;
+}

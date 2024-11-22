@@ -1,0 +1,70 @@
+.cs-options-sections{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position:absolute;
+    width:100%;
+    height:100%;
+    overflow: auto;
+    
+    border: 1px solid white;
+}
+
+.input_createSection{
+    color :#030416;
+    background-color: transparent;
+
+}
+.button_section{
+    position:absolute;
+    top:3px;
+    left: calc(6px + 11.5em);
+    width: 11.5em;
+    height: 11em;;
+    border: 1px double blue;
+
+}
+::placeholder{
+  color:rgb(247, 247, 247);
+}
+.cs button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    color: black;
+    font-family: inherit;
+    background-color: transparent;
+    cursor: pointer;
+    border-style: dotted;
+    border-radius: 5px;
+    border-width: 4px;
+    transition: border-color 0.25s;
+  }
+.cs_button:hover {
+    border-color: #030416;
+  }
+.cs_button:focus,
+.cs_button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #09f;
+    animation: spin 1s ease infinite;
+    margin: 10px auto;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
