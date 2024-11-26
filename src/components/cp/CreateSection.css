@@ -13,7 +13,7 @@
 
 .input_createSection{
     color :#030416;
-    background-color: transparent;
+    background-color: white;
 
 }
 .button_section{
@@ -25,8 +25,8 @@
     border: 1px double blue;
 
 }
-::placeholder{
-  color:rgb(247, 247, 247);
+.input_createSection::placeholder{
+  color:rgb(7, 5, 5);
 }
 .cs button {
     border-radius: 8px;

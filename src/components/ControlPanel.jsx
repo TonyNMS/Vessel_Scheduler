@@ -12,29 +12,31 @@ const ControlPanel = ({returnDataFrame}) =>{
     };
     const adjustSpacing = (endDate, startDate) =>{
         const durationInDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-        let spaceCount = durationInDays * 7; // 6 spaces per day
+        let spaceCount = durationInDays * 9.25; // 6 spaces per day
         if (durationInDays === 1){
                 spaceCount = 0;
         }else if (durationInDays ===2){
-                spaceCount = 1
+                spaceCount = 6
         }else if (durationInDays ===3){
-                spaceCount = durationInDays * 2.5; 
+                spaceCount = durationInDays * 5.5; 
         }else if (durationInDays ===4){
-                spaceCount = durationInDays * 3.5; 
-        }else if (durationInDays ===5){
-                spaceCount = durationInDays * 5;  
-        }else if (durationInDays ===6){
                 spaceCount = durationInDays * 6; 
+        }else if (durationInDays ===5){
+                spaceCount = durationInDays * 7;  
+        }else if (durationInDays ===6){
+                spaceCount = durationInDays * 7.5; 
         }else if (durationInDays ===7){
-                spaceCount = 48;
-        }
+                spaceCount = durationInDays * 7.75;
+        }else if (durationInDays ===8){
+                spaceCount = durationInDays * 8;
+                                }
         const dynamicSpacing = "-".repeat(spaceCount);
         return dynamicSpacing;
     }
     const handelRefresh = async () => {
         try {
             const prop = 'Task';
-            const response = await axios.post('http://127.0.0.1:5000/api/get_prop', { prop: prop });
+            const response = await axios.post('https://vessel-planner.onrender.com/api/get_prop', { prop: prop });
             let rawData = null;
     
             if (!response.data) {
@@ -223,7 +225,7 @@ const ControlPanel = ({returnDataFrame}) =>{
                                 }
                         const dynamicSpacing = "-".repeat(spaceCount);; // Generate dynamic spaces
 
-                        
+                        // Construct subtitle with dynamic spacing
                         let des = `${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
                         const subtitle = `${taskJobCode}`
                         data.push({

@@ -10,6 +10,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
     });
 
     const [frame,setFrame] = useState(null);
+
     const [isLoading, setIsLoading] = useState(false);
     const [shipName, setShipName] = useState("");
     const [taskName, setTaskName] = useState("");
@@ -49,18 +50,23 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
         "UK",
         "NONE"
     ]
-    useEffect(()=>{
-        const fetchInitialData = async () => {
+    useEffect(() => {
+        const checkAndFetchData = async () => {
             try {
-                const response = await axios.post('http://127.0.0.1:5000/api/get_prop', { prop: 'Task' });
-                
+                // Step 1: Check or create `Task` table
+                const checkResponse = await axios.post('https://vessel-planner.onrender.com/api/check_or_create_task_table');
+                console.log(checkResponse.data.message);
+    
+                // Step 2: Fetch initial data
+                const response = await axios.post('https://vessel-planner.onrender.com/api/get_prop', { prop: 'Task' });
+    
                 if (response.data) {
                     const rawData = response.data;
                     const transformedFrame = {
-                        columns: Object.keys(rawData).filter(key => key !== "index"), 
+                        columns: Object.keys(rawData).filter(key => key !== "index"),
                         index: Object.values(rawData.index).map(timestamp =>
                             new Date(timestamp).toISOString().split("T")[0]
-                        ), 
+                        ),
                         data: Object.values(rawData.index).map((_, i) =>
                             Object.keys(rawData)
                                 .filter(key => key !== "index")
@@ -73,11 +79,13 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
                     console.error("Failed to fetch initial data: No data returned");
                 }
             } catch (error) {
-                console.error("Failed to fetch initial data:", error);
+                console.error("Failed to initialize or fetch data:", error);
             }
         };
-        fetchInitialData();
-    }, [])
+    
+        checkAndFetchData();
+    }, []);
+    
 
     const adjustSpacing = (endDate, startDate) =>{
         const durationInDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
@@ -168,7 +176,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
 
         try {
             setIsLoading(true); 
-            await axios.post('http://127.0.0.1:5000/api/save_prop', {
+            await axios.post('https://vessel-planner.onrender.com/api/save_prop', {
               prop: 'Task',
               frame: frame,
             });
@@ -183,7 +191,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
     const handleShowAll = async () => {
         try {
             const prop = 'Task';
-            const response = await axios.post('http://127.0.0.1:5000/api/get_prop', { prop: prop });
+            const response = await axios.post('https://vessel-planner.onrender.com/api/get_prop', { prop: prop });
             let rawData = null;
     
             if (!response.data) {
