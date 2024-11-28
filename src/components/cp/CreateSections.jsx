@@ -119,6 +119,25 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
         const dynamicSpacing = "-".repeat(spaceCount); 
         return dynamicSpacing;
     }
+    const assignColor = (number) =>{
+        let rgb = "rgb(139, 212, 114)"
+        if (number == 0){
+            rgb = "rgb(139, 212, 114)"
+        }else if(number == 1){
+            rgb = "rgb(31, 21, 172)"
+        }else if(number == 2){
+            rgb = "rgb(0, 134, 53)"
+        }else if(number ==3){
+            rgb = "rgb(109, 232, 158)"
+        }else if(number ==4){
+            rgb = "rgb(211, 186, 216)"
+        }else if(number ==5){
+            rgb = "rgb(255, 51, 51)"
+        }else if (number ==6){
+            rgb = "rgb(182, 148, 136)"
+        }
+        return rgb
+    }
     const handleAddTask = async () => {
      
         if (!shipName || !taskName || !startTime || !endTime || !vesselStatsBegin || !vesselStatsEnd || !scope) {
@@ -141,7 +160,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
             newColumns.push(shipName);
         }
         const shipIndex = newColumns.indexOf(shipName);
-        let taskInforDetailed = `${taskName}£${vesselStatsBegin}£${vesselStatsBegin === "On Sea"? "NONE":startPort}£${vesselStatsEnd}£${endPort === "On Sea"? "NONE":endPort}£${0}£${scope}£${client===""? "NONE":client}£${master==="" ? "NONE":master}£${crew==="" ? "NONE":crew}£${jobCode===""? "NONE":jobCode}`;
+        let taskInforDetailed = `${taskName}£${vesselStatsBegin}£${vesselStatsBegin === "On Sea"? "NONE":startPort}£${vesselStatsEnd}£${endPort === "On Sea"? "NONE":endPort}£${bookingStatus}£${scope}£${client===""? "NONE":client}£${master==="" ? "NONE":master}£${crew==="" ? "NONE":crew}£${jobCode===""? "NONE":jobCode}`;
         newIndex.forEach((date, idx) => {
             if (date >= startTime && date <= endTime) {
                 newData[idx][shipIndex] = taskInforDetailed;
@@ -231,7 +250,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
                                     title: taskDetails[0],
                                     subtitle: `${taskDetails[10]}`,
                                     description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
-                                    bgColor: "rgb(139, 212, 114)",
+                                    bgColor: assignColor(bookingStats),
                                 });
                              
                                 tempTaskName = currentTask;
@@ -243,7 +262,8 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
                             const startTime = new Date(rawData.index[tempStartTimeIndex]);
                             const endTime = new Date(rawData.index[tempEndTimeIndex]);
                             const taskDetails = tempTaskName.split("£");
-                            const dynamicSpacing = adjustSpacing(endTime, startTime);                             
+                            const dynamicSpacing = adjustSpacing(endTime, startTime);     
+                            const bookingStats = taskDetails[5];                        
                             data.push({
                                 id: `${ship};${taskDetails[6]};${taskDetails[7]};${taskDetails[8]};${taskDetails[9]};${taskDetails[10]}`,
                                 startDate: startTime,
@@ -251,7 +271,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
                                 title: taskDetails[0],
                                 subtitle: `${taskDetails[10]}`,
                                 description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
-                                bgColor: "rgb(139, 212, 114)",
+                                bgColor: assignColor(bookingStats),
                             });
                             tempTaskName = null;
                         }
@@ -262,6 +282,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
                         const endTime = new Date(rawData.index[tempEndTimeIndex]);
                         const taskDetails = tempTaskName.split("£");
                         const dynamicSpacing = adjustSpacing(endTime, startTime); 
+                        const bookingStats = taskDetails[5];
                         data.push({
                             id: `${ship};${taskDetails[6]};${taskDetails[7]};${taskDetails[8]};${taskDetails[9]};${taskDetails[10]}`,
                             startDate: startTime,
@@ -269,7 +290,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
                             title: taskDetails[0],
                             subtitle: `${taskDetails[10]}`,
                             description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
-                            bgColor: "rgb(139, 212, 114)",
+                            bgColor: assignColor(bookingStats),
                         });
                     }
     

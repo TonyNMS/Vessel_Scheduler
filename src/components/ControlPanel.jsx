@@ -18,7 +18,25 @@ const ControlPanel = ({returnDataFrame}) =>{
     const handleDatabaseUpdate = () => {
         setDbUpdateTrigger((prev) => !prev); 
     };
-    
+    const assignColor = (number) =>{
+        let rgb = "rgb(139, 212, 114)"
+        if (number == 0){
+            rgb = "rgb(139, 212, 114)"
+        }else if(number == 1){
+            rgb = "rgb(31, 21, 172)"
+        }else if(number == 2){
+            rgb = "rgb(0, 134, 53)"
+        }else if(number ==3){
+            rgb = "rgb(109, 232, 158)"
+        }else if(number ==4){
+            rgb = "rgb(211, 186, 216)"
+        }else if(number ==5){
+            rgb = "rgb(255, 51, 51)"
+        }else if (number ==6){
+            rgb = "rgb(182, 148, 136)"
+        }
+        return rgb
+    }
     const adjustSpacing = (endDate, startDate) =>{
         const durationInDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Convert ms to days
         let spaceCount = durationInDays * 6; // 6 spaces per day
@@ -98,7 +116,7 @@ const ControlPanel = ({returnDataFrame}) =>{
                                     title: taskDetails[0],
                                     subtitle: `${taskDetails[10]}`,
                                     description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
-                                    bgColor: "rgb(139, 212, 114)",
+                                    bgColor: assignColor(bookingStats),
                                 });
         
                                 tempTaskName = currentTask;
@@ -122,7 +140,7 @@ const ControlPanel = ({returnDataFrame}) =>{
                                 title: taskDetails[0],
                                 subtitle: `${taskDetails[10]}`,
                                 description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
-                                bgColor: "rgb(139, 212, 114)",
+                                bgColor: assignColor(bookingStats),
                             });
                             tempTaskName = null;
                         }
@@ -143,7 +161,7 @@ const ControlPanel = ({returnDataFrame}) =>{
                             title: taskDetails[0],
                             subtitle: `${taskDetails[10]}`,
                             description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
-                            bgColor: "rgb(139, 212, 114)",
+                            bgColor: assignColor(bookingStats),
                         });
                     }
     
@@ -181,7 +199,7 @@ const ControlPanel = ({returnDataFrame}) =>{
             <div className="dev-section">
                 <div className = "dev-section-inner">
                     <h5 className="dev-h5">DEV PANEL</h5>
-                    <label> <input type="checkbox" onChange={handelChangeDataSrc}></input> Use remote server?</label>
+                    <label> <input type="checkbox" onChange={handelChangeDataSrc}></input> Use Server?</label>
                     <button onClick={handelRefresh}>Refresh</button>
                 </div>
             </div>

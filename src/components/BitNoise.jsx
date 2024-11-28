@@ -3,7 +3,7 @@ import {Scheduler} from "@bitnoi.se/react-scheduler";
 import React, {useEffect, useState, useCallback} from "react";
 import dayjs from "dayjs";
 import "./BitNoise.css"
-import ReactModal from 'react-modal'
+import Modal from 'react-modal'
 const mockedSchedulerData = [
     {
       id: "resource-1",
@@ -74,105 +74,117 @@ const anotherData = [
 ]
 
 function BitNoise({plottingData}) {
-  const [range, setRange] = useState({
-    startDate: new Date(),
-    endDate: dayjs().add(1, "month").toDate(),
-  });
-  const addStarEndMarker = (plottingData) =>{
-    if (!plottingData){
-      return;
-    };
-    return plottingData.map((ship) => {
-      const updatedData = [...ship.data]; 
-  
-      ship.data.forEach((task) => {
-        const { id, startDate, endDate, description } = task;
-        const taskDuration = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24);
-
-        if (taskDuration >= 1) {
-          const startTask = {
-            id: `${id}-startInfo`, 
-            startDate: startDate, 
-            endDate: startDate, 
-            title: "Start Info", 
-            bgColor: "rgb(102, 187, 106)", 
-          };
-          const endTask = {
-            id: `${id}-endInfo`, 
-            startDate: endDate, 
-            endDate: endDate, 
-            title: "End Info", 
-            bgColor: "rgb(239, 83, 80)", 
-          };
-          updatedData.push(startTask, endTask);
-        }
-      });
-      return {
-        ...ship,
-        data: updatedData,
-      };
-    });
-  }
-  const updatedPlottingData = addStarEndMarker(plottingData);
+  const [range, setRange] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [taskDetails, setTaskDetails] = useState({});
 
   const handleRangeChange = useCallback((range) => {
     setRange(range);
   }, []);
-  const handleTileClick = (data) =>{
+
+  const handleTileClick = (data) => {
+    console.log(data);
     const cleanedParts = data.description.replace(/-/g, "").split(/(?<=Dep:Cux)/);
     const departure = cleanedParts[0].trim();
-    const arrival = cleanedParts[1]?.trim();
+    const arrival = cleanedParts[1]?.trim().split(":")[1] + ":"+ cleanedParts[1]?.trim().split(":")[0];
     const taskScope = data.id.split(";")[1];
     const taskClient = data.id.split(";")[2];
     const taskMaster = data.id.split(";")[3];
     const taskCrew = data.id.split(";")[4];
     const jobCode = data.id.split(";")[5];
 
-    
-    alert(
-      `
-      Task Name: ${data.title}
-      \n
-      Job Code: ${jobCode}
-      \n
-      ${departure} || Start Date: ${data.startDate} 
-      \n
-      ${arrival} || End Date: ${data.endDate}
-      \n
-      Task Scope: ${taskScope}
-      \n
-      Task Client: ${taskClient}
-      \n
-      Task Master: ${taskMaster}
-      \n
-      Task Crew: ${taskCrew}
-      `
-    )
-  }
+  
+    setTaskDetails({
+      title: data.title,
+      jobCode,
+      departure,
+      startDate: data.startDate,
+      arrival,
+      endDate: data.endDate,
+      taskScope,
+      taskClient,
+      taskMaster,
+      taskCrew,
+    });
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
 
   return (
     <div>
       <Scheduler
-        data={(plottingData)}
+        data={plottingData}
         onRangeChange={handleRangeChange}
         config={{
           zoom: 1,
-          maxRecordsPerPage :15,
-          filterButtonState :0,
-          lang : "en",
-          filterButtonState : 2,
-          showTooltip : true,
-          showThemeToggle : true,
-
+          maxRecordsPerPage: 15,
+          filterButtonState: 2,
+          lang: "en",
+          showTooltip: true,
+          showThemeToggle: true,
         }}
         onTileClick={(resource) => handleTileClick(resource)}
         onItemClick={(item) => console.log("Clicked item:", item)}
-        
-  
       />
+
+      {/* Modal for Task Details */}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Task Details"
+        ariaHideApp={false} 
+        style={{
+          content: {
+            maxWidth: "600px", 
+            maxHeight:"45%",
+            height: "auto",
+            margin: "auto",
+            borderRadius: "8px",
+            padding: "15px",
+            backgroundColor: "white",
+            color: "black", 
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center", 
+            justifyContent: "flex-start",
+            textAlign: "center",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+          },
+          overlay: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)", 
+            display: "flex",
+            alignItems: "center", 
+            justifyContent: "center",
+          },
+          
+        }}
+      >
+        <h2 style={{ fontSize: "1.5rem", marginBottom: "15px" }}>Task Details</h2>
+        <div style={{ textAlign: "center", width: "100%" }}>
+          <p><strong>Task Name:</strong> {taskDetails.title}</p>
+          <p><strong>Job Code:</strong> {taskDetails.jobCode}</p>
+          <p><strong>Start:</strong> {taskDetails.departure}</p>
+          <p><strong>End:</strong> {taskDetails.arrival}</p>
+          <p><strong>Scope:</strong> {taskDetails.taskScope}</p>
+          <p><strong>Client:</strong> {taskDetails.taskClient}</p>
+          <p><strong>Master:</strong> {taskDetails.taskMaster}</p>
+          <p><strong>Crew:</strong> {taskDetails.taskCrew}</p>
+        </div>
+        <button onClick={closeModal} style={{ marginTop: "20px",
+          padding: "8px 15px",
+          borderRadius: "5px",
+          border: "none",
+          backgroundColor: "#007bff", // A primary button color
+          color: "white",
+          cursor: "pointer",
+          fontSize: "1rem", }}>Close</button>
+      </Modal>
     </div>
   );
-}
+};
 
 export default BitNoise;
 

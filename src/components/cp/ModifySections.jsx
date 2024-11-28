@@ -21,13 +21,14 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         "Change Task Duration",
         "Change Task Port",
         "Change Task Detail",
-        "Assign Task Occupancy"
+        "Change Booking Status"
     ];
     const vesselStatus = [
         "On Sea",
         "Departure",
         "Arrival"
     ];
+    
     const refreshDatabase = () =>{
         refresh();
     }
@@ -110,9 +111,14 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         const idx = currentData.columns.indexOf(selectedShipName===""? currentData.columns[0]:selectedShipName);
         console.log(idx);
         const tasks = new Set();
-        currentData.data.map((row)=>(tasks.add(row[idx].split("£")[0])));
+        console.log(currentData)
+        currentData.data.map((row)=>{
+            if (row[idx] !== null){
+                tasks.add(row[idx].split("£")[0]);
+            }
+        });
         console.log(tasks);
-        const defaultOptions = <option key="default" value = "">Please Choose A task</option>
+        const defaultOptions = <option key="default" value = "">Please Choose a Task</option>
         const otherOptions = [...tasks].map((item, index)=>(
             <option key={index} value={item}>
                 {item}
@@ -162,9 +168,11 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         const idx = currentData.columns.indexOf(selectedShipName);
         const newData = [...currentData.data];
         newData.map((item)=> {
-            const curDataDetail = item[idx].split("£");
-            if (curDataDetail[0] === selectedTaskName){
-                item[idx] = `${modifiedTaskName}£${curDataDetail[1]}£${curDataDetail[2]}£${curDataDetail[3]}£${curDataDetail[4]}£${curDataDetail[5]}£${curDataDetail[6]}£${curDataDetail[7]}£${curDataDetail[8]}£${curDataDetail[9]}£${curDataDetail[10]}`;
+            if (item[idx] !== null){
+                const curDataDetail = item[idx].split("£");
+                if (curDataDetail[0] === selectedTaskName){
+                    item[idx] = `${modifiedTaskName}£${curDataDetail[1]}£${curDataDetail[2]}£${curDataDetail[3]}£${curDataDetail[4]}£${curDataDetail[5]}£${curDataDetail[6]}£${curDataDetail[7]}£${curDataDetail[8]}£${curDataDetail[9]}£${curDataDetail[10]}`;
+                }
             }
         });
         const newDatFrame = {...currentData, data: newData};
@@ -257,11 +265,12 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
                         </div>
                     </>
                 );
-            case "Assign Task Occupancy":
+            case "Change Booking Status":
                 return(
                     <>
                         <div>
                             <select onChange={e => setSelectedShipName(e.target.value)}> {shipNameSelection()} </select>
+                            <select onChange={e => setSelectedTaskName(e.target.value)}>{shipTaskSelection()}</select>
                         </div>
                     </>
                 );
