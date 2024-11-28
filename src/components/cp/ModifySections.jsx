@@ -153,7 +153,8 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger, dataSrc}) =>{
                         <div>
                             <select onChange={e => setSelectedShipName(e.target.value)}> {shipNameSelection()} </select>
                             <input placeholder="Input New Vessel Name Here" onChange={e=> setModifiedShipName(e.target.value)}></input>
-                            <button onClick={handleComfirmNewVesselNameChange}>Confirm Change</button>    
+                            <button onClick={handleComfirmNewVesselNameChange}>Confirm Change</button> 
+                            <button>Refresh</button>   
                         </div>
                     </>
                 );

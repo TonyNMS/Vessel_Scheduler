@@ -20,26 +20,26 @@ const ControlPanel = ({returnDataFrame}) =>{
     };
     
     const adjustSpacing = (endDate, startDate) =>{
-        const durationInDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-        let spaceCount = durationInDays * 9.1; 
+        const durationInDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Convert ms to days
+        let spaceCount = durationInDays * 9.25; // 6 spaces per day
         if (durationInDays === 1){
-                spaceCount = 0;
+            spaceCount = 0;
         }else if (durationInDays ===2){
-                spaceCount = 6
+            spaceCount = 6
         }else if (durationInDays ===3){
-                spaceCount = durationInDays * 5.5; 
+            spaceCount = durationInDays * 5.5; 
         }else if (durationInDays ===4){
-                spaceCount = durationInDays * 6; 
+            spaceCount = durationInDays * 6; 
         }else if (durationInDays ===5){
-                spaceCount = durationInDays * 7;  
+            spaceCount = durationInDays * 7;  
         }else if (durationInDays ===6){
-                spaceCount = durationInDays * 7.5; 
+            spaceCount = durationInDays * 7.5; 
         }else if (durationInDays ===7){
-                spaceCount = durationInDays * 7.75;
+            spaceCount = durationInDays * 7.75;
         }else if (durationInDays ===8){
-                spaceCount = durationInDays * 8;
-                                }
-        const dynamicSpacing = "-".repeat(spaceCount);
+            spaceCount = durationInDays * 8;
+        }
+        const dynamicSpacing = "-".repeat(spaceCount); 
         return dynamicSpacing;
     }
     const handelRefresh = async () => {
@@ -99,31 +99,9 @@ const ControlPanel = ({returnDataFrame}) =>{
                                 const taskMaster = taskDetails[8];
                                 const taskCrew = taskDetails[9];
                                 const taskJobCode = taskDetails[10];
-                                
-                                // Calculate task duration in days
-                                const durationInDays = Math.ceil((endTime - startTime) / (1000 * 60 * 60 * 24)); // Convert ms to days
-                                let spaceCount = durationInDays * 9.25; // 6 spaces per day
-                                if (durationInDays === 1){
-                                    spaceCount = 0;
-                                }else if (durationInDays ===2){
-                                    spaceCount = 6
-                                }else if (durationInDays ===3){
-                                    spaceCount = durationInDays * 5.5; 
-                                }else if (durationInDays ===4){
-                                    spaceCount = durationInDays * 6; 
-                                }else if (durationInDays ===5){
-                                    spaceCount = durationInDays * 7;  
-                                }else if (durationInDays ===6){
-                                    spaceCount = durationInDays * 7.5; 
-                                }else if (durationInDays ===7){
-                                    spaceCount = durationInDays * 7.75;
-                                }else if (durationInDays ===8){
-                                    spaceCount = durationInDays * 8;
-                                }
-                                
-                                const dynamicSpacing = "-".repeat(spaceCount);; 
 
-                                // Construct subtitle with dynamic spacing
+                                const dynamicSpacing = adjustSpacing(endTime, startTime); 
+
                                 let des = `${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
                                 const subtitle = `${taskJobCode}`
                                 data.push({
@@ -156,28 +134,8 @@ const ControlPanel = ({returnDataFrame}) =>{
                             const taskMaster = taskDetails[8];
                             const taskCrew = taskDetails[9];
                             const taskJobCode = taskDetails[10];
-                            
-                            // Calculate task duration in days
-                            const durationInDays = Math.ceil((endTime - startTime) / (1000 * 60 * 60 * 24)); // Convert ms to days
-                            let spaceCount = durationInDays * 9.1; // 6 spaces per day
-                                if (durationInDays === 1){
-                                    spaceCount = 0;
-                                }else if (durationInDays ===2){
-                                    spaceCount = 6
-                                }else if (durationInDays ===3){
-                                    spaceCount = durationInDays * 5.5; 
-                                }else if (durationInDays ===4){
-                                    spaceCount = durationInDays * 6; 
-                                }else if (durationInDays ===5){
-                                    spaceCount = durationInDays * 7;  
-                                }else if (durationInDays ===6){
-                                    spaceCount = durationInDays * 7.5; 
-                                }else if (durationInDays ===7){
-                                    spaceCount = durationInDays * 7.75;
-                                }else if (durationInDays ===8){
-                                    spaceCount = durationInDays * 8;
-                                }
-                            const dynamicSpacing = "-".repeat(spaceCount);; // Generate dynamic spaces
+                        
+                            const dynamicSpacing = adjustSpacing(endTime, startTime);; // Generate dynamic spaces
 
                             // Construct subtitle with dynamic spacing
                             let des = `${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
@@ -212,28 +170,7 @@ const ControlPanel = ({returnDataFrame}) =>{
                         const taskMaster = taskDetails[8];
                         const taskCrew = taskDetails[9];
                         const taskJobCode = taskDetails[10];
-                        
-                        // Calculate task duration in days
-                        const durationInDays = Math.ceil((endTime - startTime) / (1000 * 60 * 60 * 24)); // Convert ms to days
-                        let spaceCount = durationInDays * 9.25; 
-                                if (durationInDays === 1){
-                                    spaceCount = 0;
-                                }else if (durationInDays ===2){
-                                    spaceCount = 6
-                                }else if (durationInDays ===3){
-                                    spaceCount = durationInDays * 5.5; 
-                                }else if (durationInDays ===4){
-                                    spaceCount = durationInDays * 6; 
-                                }else if (durationInDays ===5){
-                                    spaceCount = durationInDays * 7;  
-                                }else if (durationInDays ===6){
-                                    spaceCount = durationInDays * 7.5; 
-                                }else if (durationInDays ===7){
-                                    spaceCount = durationInDays * 7.75;
-                                }else if (durationInDays ===8){
-                                    spaceCount = durationInDays * 8;
-                                }
-                        const dynamicSpacing = "-".repeat(spaceCount);; // Generate dynamic spaces
+                        const dynamicSpacing = adjustSpacing(endTime, startTime); // Generate dynamic spaces
 
                         // Construct subtitle with dynamic spacing
                         let des = `${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
