@@ -5,7 +5,7 @@ import QuerySections from "./cp/QuerySections";
 import CreateSections from "./cp/CreateSections";
 import ModifySections from "./cp/ModifySections";
 
-const ControlPanel = ({returnDataFrame}) =>{
+const ControlPanel = ({returnDataFrame, filterTime}) =>{
     const [dbUpdateTrigger, setDbUpdateTrigger] = useState(false);
     const [dataSrc, setDataSrc] = useState('http://127.0.0.1:5000/');
     const handelChangeDataSrc = (event)=>{
@@ -187,7 +187,7 @@ const ControlPanel = ({returnDataFrame}) =>{
     return(
         <div className="control-panel-container">
             <div className="query-section">
-                <QuerySections></QuerySections>
+                <QuerySections filterTime={filterTime}></QuerySections>
             </div>
             <div className = "create-section">
                 <CreateSections returnDataFrame={returnDataFrame} onDatabaseUpdate={handleDatabaseUpdate} dataSrc={dataSrc}></CreateSections>

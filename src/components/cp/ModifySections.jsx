@@ -12,6 +12,7 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
     const [modifiedTaskName, setModifiedTaskName] = useState("");
     const [modifiedVesselStartStatus, setModifiedStartVesselStatus] = useState("Departure");
     const [modifiedVesselEndStatus, setModifiedEndVesselStatus] = useState("Arrival");
+    const [vesselBookingStatus, setVesselBookingStatus] = useState(0);
     
 
     const modificationOptions = [
@@ -28,7 +29,7 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         "Departure",
         "Arrival"
     ];
-    
+
     const refreshDatabase = () =>{
         refresh();
     }
@@ -107,11 +108,11 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
     };
     const shipTaskSelection = () =>{
         if (!currentData) return ;
-    
+
         const idx = currentData.columns.indexOf(selectedShipName===""? currentData.columns[0]:selectedShipName);
         console.log(idx);
         const tasks = new Set();
-        console.log(currentData)
+        console.log(currentData);
         currentData.data.map((row)=>{
             if (row[idx] !== null){
                 tasks.add(row[idx].split("£")[0]);

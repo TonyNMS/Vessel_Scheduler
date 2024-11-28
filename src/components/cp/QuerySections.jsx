@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./QuerySections.css";
-const QuerySections = ()=>{
+const QuerySections = ({filterTime})=>{
     const [data, setData] = useState({});
     const [selectedFilter, setSelectedFilter] = useState("");
+    const [fStart, setFStart] = useState("")
+    const[fEnd, setFEnd] = useState("")
     const handleShowAllScheduel = async () =>{
-        
         try{
             const prop = 'Task';
             const response = await axios.post('http://127.0.0.1:5000/api/get_prop', {
@@ -29,6 +30,10 @@ const QuerySections = ()=>{
     ]
     const handelChange = (e) =>{
        setSelectedFilter(e);
+    }
+
+    const handelTimeFitler = () =>{
+        filterTime(fStart, fEnd);
     }
     const renderFilterDetails = () => { 
         switch (selectedFilter) {
@@ -64,13 +69,13 @@ const QuerySections = ()=>{
                     <>  
                         <div className="form-group">
                             <label>Start Time: </label>
-                            <input type="date" placeholder="Select Time" />
+                            <input type="date" placeholder="Select Time" onChange = {e => setFStart(e.target.value)}/>
                         </div>
                         <div className="form-group">
                             <label>End Time: </label>
-                            <input type="date" placeholder="Select Time" />
+                            <input type="date" placeholder="Select Time" onChange = {e => setFEnd(e.target.value)}/>
                         </div>
-                        <button>Filter</button>
+                        <button onClick={handelTimeFitler}>Filter</button>
                     </>
                 
                 );

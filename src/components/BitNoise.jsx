@@ -73,7 +73,7 @@ const anotherData = [
       }
 ]
 
-function BitNoise({plottingData}) {
+function BitNoise({plottingData, startTimeFileter, endTimeFilter}) {
   const [range, setRange] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [taskDetails, setTaskDetails] = useState({});
@@ -81,7 +81,8 @@ function BitNoise({plottingData}) {
   const handleRangeChange = useCallback((range) => {
     setRange(range);
   }, []);
-
+  const [startDate, setStartDate] = useState("");  
+  const [endDate, setEndDate] = useState(""); 
   const handleTileClick = (data) => {
     console.log(data);
     const cleanedParts = data.description.replace(/-/g, "").split(/(?<=Dep:Cux)/);
@@ -114,14 +115,31 @@ function BitNoise({plottingData}) {
   };
 
   return (
-    <div>
+      <div>
+        <div>
+        <label>Start Date:</label>
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+      </div>
+      
+      <div>
+        <label>End Date:</label>
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+      </div>
       <Scheduler
         data={plottingData}
         onRangeChange={handleRangeChange}
         config={{
           zoom: 1,
           maxRecordsPerPage: 15,
-          filterButtonState: 2,
+          filterButtonState: 1,
           lang: "en",
           showTooltip: true,
           showThemeToggle: true,
