@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./ModifySections.css"
 
-const ModifySections = ({returnedDataFrame, dbUpdateTrigger, dataSrc}) =>{
+const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
     const [currentData, setCurrentData] = useState(null);
     const [selecterdModOption, setSelectedModOption] = useState("a");
     const [modifiedData, setModifiedData] = useState({});
-    const [selectedShipName, setSelectedShipName] = useState("Ship1");
+    const [selectedShipName, setSelectedShipName] = useState("");
     const [modifiedShipName, setModifiedShipName] = useState("");
+    const [selectedTaskName, setSelectedTaskName] = useState("");
     const [modifiedTaskName, setModifiedTaskName] = useState("");
     const [modifiedVesselStartStatus, setModifiedStartVesselStatus] = useState("Departure");
     const [modifiedVesselEndStatus, setModifiedEndVesselStatus] = useState("Arrival");
@@ -26,7 +27,10 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger, dataSrc}) =>{
         "On Sea",
         "Departure",
         "Arrival"
-    ]
+    ];
+    const refreshDatabase = () =>{
+        refresh();
+    }
     const retrieveDataFrame = async () => {
         try {
           const response = await axios.post(`${dataSrc}api/get_prop`, { prop: "Task" });
@@ -64,40 +68,60 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger, dataSrc}) =>{
                 frame: modData,
             });
             await retrieveDataFrame();
+            
             alert("Database updated successfully!");
         } catch (error) {
             console.error("Fix it:", error);
             alert("Unable to upload modified data: " + error.message);
+        } finally{
+            setSelectedShipName("");
+            setSelectedTaskName("");
+            setModifiedShipName("");
+            setModifiedTaskName("");
         }
     };
- 
-
+   
     useEffect(()=>{
         retrieveDataFrame();
     }, [dbUpdateTrigger])
-
+//================================Drop Down List=================================================
     const modificationSelection = () =>{
         return modificationOptions.map((option, index)=>{
             return <option value = {option} index = {index}> {option}</option>
         });
     }
-    const shipNameSelection = () => {
-        if (!currentData) return null; 
-        return currentData.columns.map((option, index) => (
-            <option key={index} value={option}>
-                {option}
-            </option>
-        ));
-    };
-    
     const vesselOptionSelection = () =>{
         return vesselStatus.map((stat, index) =>{
             return <option value = {stat} key = {index}> {stat}</option>
         })
     }
-   
+    const shipNameSelection = () => {
+        const defaultOption = <option key = "default" value = "">"Select A ship Name" </option>
+        const otherOptions = currentData.columns.map((option, index) => (                
+            <option key={index} value={option}>
+                {option}
+            </option>
+        ));
+        return  [defaultOption, ...otherOptions];
+    };
+    const shipTaskSelection = () =>{
+        if (!currentData) return ;
+    
+        const idx = currentData.columns.indexOf(selectedShipName===""? currentData.columns[0]:selectedShipName);
+        console.log(idx);
+        const tasks = new Set();
+        currentData.data.map((row)=>(tasks.add(row[idx].split("£")[0])));
+        console.log(tasks);
+        const defaultOptions = <option key="default" value = "">Please Choose A task</option>
+        const otherOptions = [...tasks].map((item, index)=>(
+            <option key={index} value={item}>
+                {item}
+            </option>
+        ))
+        return [defaultOptions, ...otherOptions];
+    }
+//================================Handle Modification=================================================
     const handelNewVesselName = () =>{
-      
         if (modifiedShipName === "") {
             alert("A Vessel Name is Required to Perform the Operation");
             return;
@@ -114,20 +138,38 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger, dataSrc}) =>{
         const updatedColumns = [...currentData.columns];
         updatedColumns[index] = modifiedShipName;
         const updatedData = { ...currentData, columns: updatedColumns };
-        console.log(modifiedShipName);
-        console.log(updatedData);
         setModifiedData(updatedData);
         return updatedData;
     }
-    const handleComfirmNewVesselNameChange = async ()=>{
-        const updateData = handelNewVesselName();
-        if (updateData){
-            await updateDataBase(updateData);
-        }
-    }
-
 
     const handelNewTaskName = () =>{
+        if (modifiedTaskName === ""){
+            alert("A New Task Name is Required to Perform the Operation");
+            return;
+        }
+        if (selectedTaskName === ""){
+            alert("An Existing Task Must be Selected To complete the Operation");
+            return;
+        }
+        if (selectedShipName === ""){
+            alert("A Ship Must be Selected to Complete the Operation");
+            return;
+        }
+        if (currentData.columns.indexOf(selectedShipName) === -1){
+            alert("Selected Ship does not Exist in Server");
+            return;
+        }
+        const idx = currentData.columns.indexOf(selectedShipName);
+        const newData = [...currentData.data];
+        newData.map((item)=> {
+            const curDataDetail = item[idx].split("£");
+            if (curDataDetail[0] === selectedTaskName){
+                item[idx] = `${modifiedTaskName}£${curDataDetail[1]}£${curDataDetail[2]}£${curDataDetail[3]}£${curDataDetail[4]}£${curDataDetail[5]}£${curDataDetail[6]}£${curDataDetail[7]}£${curDataDetail[8]}£${curDataDetail[9]}£${curDataDetail[10]}`;
+            }
+        });
+        const newDatFrame = {...currentData, data: newData};
+        setModifiedData(newDatFrame);
+        return newDatFrame;
 
     }
     const handelNewTaskDuration = () =>{
@@ -142,8 +184,21 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger, dataSrc}) =>{
     const handelNewAssignedOccupency =()=>{
 
     }
-    
-    
+//=================================Button Interface================================================
+    const handleComfirmNewVesselNameChange = async ()=>{
+        const updateData = handelNewVesselName();
+        if (updateData){
+            await updateDataBase(updateData);
+        }
+    }
+    const handleComfirmNewTaskNameChange = async ()=>{
+        const updateData = handelNewTaskName();
+        if (updateData){
+            await updateDataBase(updateData);
+        }
+    }
+//=================================================================================
+
     
     const renderDiaplayOptions = ()=>{
         switch (selecterdModOption){
@@ -151,10 +206,10 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger, dataSrc}) =>{
                 return (
                     <>
                         <div>
-                            <select onChange={e => setSelectedShipName(e.target.value)}> {shipNameSelection()} </select>
-                            <input placeholder="Input New Vessel Name Here" onChange={e=> setModifiedShipName(e.target.value)}></input>
+                            <select onChange={(e) => {setSelectedShipName(e.target.value); console.log(e.target.value)}}> {shipNameSelection()} </select>
+                            <input placeholder="Input New Vessel Name Here" onChange={(e)=> setModifiedShipName(e.target.value)}></input>
                             <button onClick={handleComfirmNewVesselNameChange}>Confirm Change</button> 
-                            <button>Refresh</button>   
+                            <button onClick = {refreshDatabase}>Refresh</button>   
                         </div>
                     </>
                 );
@@ -162,8 +217,11 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger, dataSrc}) =>{
                 return (
                     <>
                         <div>
-                            <select onChange={e => setSelectedShipName(e.target.value)}> {shipNameSelection()} </select>
-                            <input placeholder="Input New Task Name" onChange = {e=>setModifiedShipName(e.target.value)}></input>
+                            <select onChange = {(e) => setSelectedShipName(e.target.value)}> {shipNameSelection()} </select>
+                            <select onChange = {(e) => setSelectedTaskName(e.target.value)}>{shipTaskSelection()}</select>
+                            <input placeholder ="Input New Task Name" onChange = {e=>setModifiedTaskName(e.target.value)}></input>
+                            <button onClick = {handleComfirmNewTaskNameChange}>Confirm Change</button>
+                            <button onClick ={refreshDatabase}>Refresh</button>
                         </div>
                     </>
                 );

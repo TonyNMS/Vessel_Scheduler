@@ -21,7 +21,7 @@ const ControlPanel = ({returnDataFrame}) =>{
     
     const adjustSpacing = (endDate, startDate) =>{
         const durationInDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Convert ms to days
-        let spaceCount = durationInDays * 9.25; // 6 spaces per day
+        let spaceCount = durationInDays * 6; // 6 spaces per day
         if (durationInDays === 1){
             spaceCount = 0;
         }else if (durationInDays ===2){
@@ -52,7 +52,6 @@ const ControlPanel = ({returnDataFrame}) =>{
             if (!response.data) {
                 throw new Error("Data structure is incorrect or missing");
             } else {
-                //console.log(`response.data at CS, ${JSON.stringify(response.data)}`);
                 rawData = response.data;
             }
     
@@ -88,100 +87,62 @@ const ControlPanel = ({returnDataFrame}) =>{
                                 const startTime = new Date(rawData.index[tempStartTimeIndex]);
                                 const endTime = new Date(rawData.index[tempEndTimeIndex]);
                                 const taskDetails = tempTaskName.split("£");
-                                const actualTaskName = taskDetails[0];
-                                const startStats = taskDetails[1];
-                                const endStats = taskDetails[3];
-                                const startPort = taskDetails[2];
-                                const endPort = taskDetails[4];
                                 const bookingStats = taskDetails[5];
-                                const taskScope = taskDetails[6];
-                                const taskClient = taskDetails[7];
-                                const taskMaster = taskDetails[8];
-                                const taskCrew = taskDetails[9];
-                                const taskJobCode = taskDetails[10];
-
                                 const dynamicSpacing = adjustSpacing(endTime, startTime); 
 
-                                let des = `${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
-                                const subtitle = `${taskJobCode}`
+                              
                                 data.push({
-                                    id: `${ship};${taskScope};${taskClient};${taskMaster};${taskCrew};${taskJobCode}`,
+                                    id: `${ship};${taskDetails[6]};${taskDetails[7]};${taskDetails[8]};${taskDetails[9]};${taskDetails[10]}`,
                                     startDate: startTime,
                                     endDate: endTime,
-                                    title: actualTaskName,
-                                    subtitle: subtitle,
-                                    description: des,
+                                    title: taskDetails[0],
+                                    subtitle: `${taskDetails[10]}`,
+                                    description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
                                     bgColor: "rgb(139, 212, 114)",
                                 });
-                                // Start a new task
+        
                                 tempTaskName = currentTask;
                                 tempStartTimeIndex = i;
                             }
                         } else if (tempTaskName !== null) {
-                            // Gap detected, finalize the current task
+    
                             const tempEndTimeIndex = i - 1;
                             const startTime = new Date(rawData.index[tempStartTimeIndex]);
                             const endTime = new Date(rawData.index[tempEndTimeIndex]);
                             const taskDetails = tempTaskName.split("£");
-                            const actualTaskName = taskDetails[0];
-                            const startStats = taskDetails[1];
-                            const endStats = taskDetails[3];
-                            const startPort = taskDetails[2];
-                            const endPort = taskDetails[4];
                             const bookingStats = taskDetails[5];
-                            const taskScope = taskDetails[6];
-                            const taskClient = taskDetails[7];
-                            const taskMaster = taskDetails[8];
-                            const taskCrew = taskDetails[9];
-                            const taskJobCode = taskDetails[10];
-                        
-                            const dynamicSpacing = adjustSpacing(endTime, startTime);; // Generate dynamic spaces
+            
+                            const dynamicSpacing = adjustSpacing(endTime, startTime);
 
-                            // Construct subtitle with dynamic spacing
-                            let des = `${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
-                            const subtitle = `${taskJobCode}`
+                           
                             data.push({
-                                id: `${ship};${taskScope};${taskClient};${taskMaster};${taskCrew};${taskJobCode}`,
+                                id: `${ship};${taskDetails[6]};${taskDetails[7]};${taskDetails[8]};${taskDetails[9]};${taskDetails[10]}`,
                                 startDate: startTime,
                                 endDate: endTime,
-                                title: actualTaskName,
-                                subtitle: subtitle,
-                                description: des,
+                                title: taskDetails[0],
+                                subtitle: `${taskDetails[10]}`,
+                                description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
                                 bgColor: "rgb(139, 212, 114)",
                             });
                             tempTaskName = null;
                         }
                     }
-    
-                    // Finalize the last task, if any
                     if (tempTaskName !== null) {
                         const tempEndTimeIndex = Object.keys(rawData[ship]).length - 1;
                         const startTime = new Date(rawData.index[tempStartTimeIndex]);
                         const endTime = new Date(rawData.index[tempEndTimeIndex]);
                         const taskDetails = tempTaskName.split("£");
-                        const actualTaskName = taskDetails[0];
-                        const startStats = taskDetails[1];
-                        const endStats = taskDetails[3];
-                        const startPort = taskDetails[2];
-                        const endPort = taskDetails[4];
                         const bookingStats = taskDetails[5];
-                        const taskScope = taskDetails[6];
-                        const taskClient = taskDetails[7];
-                        const taskMaster = taskDetails[8];
-                        const taskCrew = taskDetails[9];
-                        const taskJobCode = taskDetails[10];
+            
                         const dynamicSpacing = adjustSpacing(endTime, startTime); // Generate dynamic spaces
 
-                        // Construct subtitle with dynamic spacing
-                        let des = `${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
-                        const subtitle = `${taskJobCode}`
                         data.push({
-                            id: `${ship};${taskScope};${taskClient};${taskMaster};${taskCrew};${taskJobCode}`,
+                            id: `${ship};${taskDetails[6]};${taskDetails[7]};${taskDetails[8]};${taskDetails[9]};${taskDetails[10]}`,
                             startDate: startTime,
                             endDate: endTime,
-                            title: actualTaskName,
-                            subtitle: subtitle,
-                            description: des,
+                            title: taskDetails[0],
+                            subtitle: `${taskDetails[10]}`,
+                            description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
                             bgColor: "rgb(139, 212, 114)",
                         });
                     }
@@ -195,7 +156,7 @@ const ControlPanel = ({returnDataFrame}) =>{
                 }
             }
     
-            //console.log(`here is the data ${JSON.stringify(finalRes)}`);
+
             returnDataFrame(finalRes);
         } catch (error) {
             console.error("Fix it:", error);
@@ -214,7 +175,7 @@ const ControlPanel = ({returnDataFrame}) =>{
                 <CreateSections returnDataFrame={returnDataFrame} onDatabaseUpdate={handleDatabaseUpdate} dataSrc={dataSrc}></CreateSections>
             </div>
             <div className="modify-section">
-                <ModifySections dbUpdateTrigger={dbUpdateTrigger} dataSrc={dataSrc}></ModifySections>
+                <ModifySections refresh={handelRefresh} dbUpdateTrigger={dbUpdateTrigger} dataSrc={dataSrc} ></ModifySections>
             </div>
             <div className="delete-section"></div>
             <div className="dev-section">

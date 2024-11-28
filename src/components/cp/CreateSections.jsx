@@ -25,6 +25,16 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
     const [comment, setComment] = useState("");
     const [vesselStatsBegin, setVesselStatsBegin] = useState("Dep");
     const [vesselStatsEnd, setVesselStatsEnd] = useState("Arr");
+    const [bookingStatus, setBookingStatus] = useState(0);
+    const planningOptions = [
+        {0 : "Select a Booking Status"},
+        {1 : "Dev"},
+        {2 : "Confirmed"},
+        {3 : "Binding order sent"},
+        {4 : "Contract outstanding"},
+        {5 : "Mantainance/Dry Dock"},
+        {6 : "Vessel Charted By OSE"},
+    ]
     const vesselStatus = [
         "Dep",
         "Sail",
@@ -88,7 +98,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
 
     const adjustSpacing = (endDate, startDate) =>{
         const durationInDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Convert ms to days
-        let spaceCount = durationInDays * 9.25; // 6 spaces per day
+        let spaceCount = durationInDays * 6; // 6 spaces per day
         if (durationInDays === 1){
             spaceCount = 0;
         }else if (durationInDays ===2){
@@ -149,13 +159,11 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
             index: newIndex,
             data: newData,
         });
-        //console.log(`Updated frame: ${JSON.stringify({ columns: newColumns, index: newIndex, data: newData })}`);
     };
     const handleSubmit = async () => {
 
         try {
             setIsLoading(true); 
-            console.log(shipName);
             console.log(frame);
             await axios.post(`${dataSrc}api/save_prop`, {
               prop: 'Task',
@@ -199,45 +207,30 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
                     let tempTaskName = null;
                     let tempStartTimeIndex = null;
     
-                    // Iterate through each time slot for the current ship
+                    
                     for (let i = 0; i < Object.keys(rawData[ship]).length; i++) {
                         const currentTask = rawData[ship][i];
     
                         if (currentTask !== "" && currentTask !== null) {
                             if (tempTaskName === null) {
-                                // Start a new task
                                 tempTaskName = currentTask;
                                 tempStartTimeIndex = i;
                             } else if (currentTask !== tempTaskName) {
-                                // Task transition, finalize the previous task
                                 const tempEndTimeIndex = i - 1;
                                 const startTime = new Date(rawData.index[tempStartTimeIndex]);
                                 const endTime = new Date(rawData.index[tempEndTimeIndex]);
                                 const taskDetails = tempTaskName.split("£");
-                                const actualTaskName = taskDetails[0];
-                                const startStats = taskDetails[1];
-                                const endStats = taskDetails[3];
-                                const startPort = taskDetails[2];
-                                const endPort = taskDetails[4];
-                                const bookingStats = taskDetails[5];
-                                const taskScope = taskDetails[6];
-                                const taskClient = taskDetails[7];
-                                const taskMaster = taskDetails[8];
-                                const taskCrew = taskDetails[9];
-                                const taskJobCode = taskDetails[10];
-                            
                                 const dynamicSpacing = adjustSpacing(endTime, startTime);
-
-                             
-                                let des = `${startStats }${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
-                                const subtitle = `${taskJobCode}`
+                                const bookingStats = taskDetails[5];
+                                //id: `${ship};${taskScope};${taskClient};${taskMaster};${taskCrew};${taskJobCode}`
+                                //`${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`
                                 data.push({
-                                    id: `${ship};${taskScope};${taskClient};${taskMaster};${taskCrew};${taskJobCode}`,
+                                    id: `${ship};${taskDetails[6]};${taskDetails[7]};${taskDetails[8]};${taskDetails[9]};${taskDetails[10]}`,
                                     startDate: startTime,
                                     endDate: endTime,
-                                    title: actualTaskName,
-                                    subtitle: subtitle,
-                                    description: des,
+                                    title: taskDetails[0],
+                                    subtitle: `${taskDetails[10]}`,
+                                    description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
                                     bgColor: "rgb(139, 212, 114)",
                                 });
                              
@@ -250,64 +243,32 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
                             const startTime = new Date(rawData.index[tempStartTimeIndex]);
                             const endTime = new Date(rawData.index[tempEndTimeIndex]);
                             const taskDetails = tempTaskName.split("£");
-                            const actualTaskName = taskDetails[0];
-                            const startStats = taskDetails[1];
-                            const endStats = taskDetails[3];
-                            const startPort = taskDetails[2];
-                            const endPort = taskDetails[4];
-                            const bookingStats = taskDetails[5];
-                            const taskScope = taskDetails[6];
-                            const taskClient = taskDetails[7];
-                            const taskMaster = taskDetails[8];
-                            const taskCrew = taskDetails[9];
-                            const taskJobCode = taskDetails[10];
-                            
-                            const dynamicSpacing = adjustSpacing(endTime, startTime); // Generate dynamic spaces
-
-                            let des = `${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
-                            const subtitle = `${taskJobCode}`
+                            const dynamicSpacing = adjustSpacing(endTime, startTime);                             
                             data.push({
-                                id: `${ship};${taskScope};${taskClient};${taskMaster};${taskCrew};${taskJobCode}`,
+                                id: `${ship};${taskDetails[6]};${taskDetails[7]};${taskDetails[8]};${taskDetails[9]};${taskDetails[10]}`,
                                 startDate: startTime,
                                 endDate: endTime,
-                                title: actualTaskName,
-                                subtitle: subtitle,
-                                description: des,
+                                title: taskDetails[0],
+                                subtitle: `${taskDetails[10]}`,
+                                description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
                                 bgColor: "rgb(139, 212, 114)",
                             });
                             tempTaskName = null;
                         }
                     }
-    
-                    // Finalize the last task, if any
                     if (tempTaskName !== null) {
                         const tempEndTimeIndex = Object.keys(rawData[ship]).length - 1;
                         const startTime = new Date(rawData.index[tempStartTimeIndex]);
                         const endTime = new Date(rawData.index[tempEndTimeIndex]);
                         const taskDetails = tempTaskName.split("£");
-                        const actualTaskName = taskDetails[0];
-                        const startStats = taskDetails[1];
-                        const endStats = taskDetails[3];
-                        const startPort = taskDetails[2];
-                        const endPort = taskDetails[4];
-                        const bookingStats = taskDetails[5];
-                        const taskScope = taskDetails[6];
-                        const taskClient = taskDetails[7];
-                        const taskMaster = taskDetails[8];
-                        const taskCrew = taskDetails[9];
-                        const taskJobCode = taskDetails[10];
-                        
-        
                         const dynamicSpacing = adjustSpacing(endTime, startTime); 
-                        let des = `${startStats}${startPort === "NONE" ? "" : ":" + startPort}${dynamicSpacing}${endPort === "NONE" ? "" :endPort}${":"+endStats}`;
-                        const subtitle = `${taskJobCode}`
                         data.push({
-                            id: `${ship};${taskScope};${taskClient};${taskMaster};${taskCrew};${taskJobCode}`,
+                            id: `${ship};${taskDetails[6]};${taskDetails[7]};${taskDetails[8]};${taskDetails[9]};${taskDetails[10]}`,
                             startDate: startTime,
                             endDate: endTime,
-                            title: actualTaskName,
-                            subtitle: subtitle,
-                            description: des,
+                            title: taskDetails[0],
+                            subtitle: `${taskDetails[10]}`,
+                            description: `${taskDetails[1]}${taskDetails[2] === "NONE" ? "" : ":" + taskDetails[2]}${dynamicSpacing}${taskDetails[4] === "NONE" ? "" :taskDetails[4]}${":"+taskDetails[3]}`,
                             bgColor: "rgb(139, 212, 114)",
                         });
                     }
@@ -321,7 +282,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
                 }
             }
     
-            //console.log(`here is the data ${JSON.stringify(finalRes)}`);
+          
             returnDataFrame(finalRes);
         } catch (error) {
             console.error("Fix it:", error);
@@ -359,6 +320,11 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
             return <option value = {stat} index = {index}>{stat}</option>
         })
     }
+    const planningStatusSelection = () =>{
+        return planningOptions.map((stat, index)=>{
+            return <option value = {Object.keys(stat)} index = {index}>{Object.values(stat)}</option>
+        })
+    }
 
     return (
         <div className="cs-options-sections">
@@ -382,7 +348,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
                 </div>
                 <div>
                     <input type="text" placeholder='Master of the Task' value = {master} className='input_createSection' onChange={e => setMaster(e.target.value)}></input>
-                    
+                    <select onChange={e=>setBookingStatus(e.target.value)}>{planningStatusSelection()}</select>
                     <select onChange={e=> setCrew(e.target.value)}>{vesselCrewOptionSelction()}</select>
                 </div>
                 <div>
