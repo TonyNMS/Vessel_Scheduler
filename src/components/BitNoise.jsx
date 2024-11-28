@@ -122,7 +122,6 @@ function BitNoise({plottingData}) {
     const cleanedParts = data.description.replace(/-/g, "").split(/(?<=Dep:Cux)/);
     const departure = cleanedParts[0].trim();
     const arrival = cleanedParts[1]?.trim();
-    console.log(departure+ arrival)
     const taskScope = data.id.split(";")[1];
     const taskClient = data.id.split(";")[2];
     const taskMaster = data.id.split(";")[3];
@@ -158,7 +157,7 @@ function BitNoise({plottingData}) {
         onRangeChange={handleRangeChange}
         config={{
           zoom: 1,
-          maxRecordsPerPage :8,
+          maxRecordsPerPage :15,
           filterButtonState :0,
           lang : "en",
           filterButtonState : 2,

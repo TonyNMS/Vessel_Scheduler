@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './CreateSection.css'
-function CreateSections({returnDataFrame, onDatabaseUpdate}) {
+function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
    
     const [frame2, setFrame2] = useState({
         columns: [],
@@ -9,8 +9,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
         data: []
     });
 
-    const [frame,setFrame] = useState(null);
-
+    const [frame,setFrame] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [shipName, setShipName] = useState("");
     const [taskName, setTaskName] = useState("");
@@ -53,12 +52,12 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
     useEffect(() => {
         const checkAndFetchData = async () => {
             try {
-                // Step 1: Check or create `Task` table
-                const checkResponse = await axios.post('https://vessel-planner.onrender.com/api/check_or_create_task_table');
+                console.log(`Upon INitial render, CS is using ${dataSrc}`)
+                const checkResponse = await axios.post(`${dataSrc}api/check_or_create_task_table`);
                 console.log(checkResponse.data.message);
     
-                // Step 2: Fetch initial data
-                const response = await axios.post('https://vessel-planner.onrender.com/api/get_prop', { prop: 'Task' });
+               
+                const response = await axios.post(`${dataSrc}api/get_prop`, { prop: 'Task' });
     
                 if (response.data) {
                     const rawData = response.data;
@@ -82,8 +81,8 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
                 console.error("Failed to initialize or fetch data:", error);
             }
         };
-    
         checkAndFetchData();
+        
     }, []);
     
 
@@ -115,38 +114,22 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
             alert("All fields must be filled out!");
             return;
         }
-    
         const startDate = new Date(startTime);
         const endDate = new Date(endTime);
-    
-    
         let currentDates = frame.index.map(date => new Date(date));
         const minDate = new Date(Math.min(...currentDates.map(d => d.getTime()), startDate.getTime()));
         const maxDate = new Date(Math.max(...currentDates.map(d => d.getTime()), endDate.getTime()));
-    
-      
         let continuousDates = [];
         for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
             continuousDates.push(new Date(d));
         }
-    
-      
         const newIndex = continuousDates.map(date => date.toISOString().split("T")[0]);
-    
-     
         let newColumns = [...frame.columns];
         let newData = newIndex.map(() => Array(newColumns.length).fill(""));
-        
-        
-     
         if (!newColumns.includes(shipName)) {
             newColumns.push(shipName);
         }
-    
-      
         const shipIndex = newColumns.indexOf(shipName);
-     
-        
         let taskInforDetailed = `${taskName}£${vesselStatsBegin}£${vesselStatsBegin === "On Sea"? "NONE":startPort}£${vesselStatsEnd}£${endPort === "On Sea"? "NONE":endPort}£${0}£${scope}£${client===""? "NONE":client}£${master==="" ? "NONE":master}£${crew==="" ? "NONE":crew}£${jobCode===""? "NONE":jobCode}`;
         newIndex.forEach((date, idx) => {
             if (date >= startTime && date <= endTime) {
@@ -160,23 +143,20 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
                 if (task) newData[newIndexPos][i] = task;
             });
         });
-
         setFrame({
             columns: newColumns,
             index: newIndex,
             data: newData,
         });
-        
-    
         //console.log(`Updated frame: ${JSON.stringify({ columns: newColumns, index: newIndex, data: newData })}`);
     };
-    
-
     const handleSubmit = async () => {
 
         try {
             setIsLoading(true); 
-            await axios.post('https://vessel-planner.onrender.com/api/save_prop', {
+            console.log(shipName);
+            console.log(frame);
+            await axios.post(`${dataSrc}api/save_prop`, {
               prop: 'Task',
               frame: frame,
             });
@@ -191,7 +171,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
     const handleShowAll = async () => {
         try {
             const prop = 'Task';
-            const response = await axios.post('https://vessel-planner.onrender.com/api/get_prop', { prop: prop });
+            const response = await axios.post(`${dataSrc}api/get_prop`, { prop: prop });
             let rawData = null;
     
             if (!response.data) {
@@ -413,7 +393,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate}) {
 
         try {
             setIsLoading(true); // Show a loading spinner or similar feedback
-            await axios.post('http://127.0.0.1:5000/api/save_prop', {
+            await axios.post(`${dataSrc}api/save_prop`, {
               prop: 'Task',
               frame: frame2,
             });

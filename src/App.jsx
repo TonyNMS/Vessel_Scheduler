@@ -12,8 +12,6 @@ function App() {
   }
   useEffect(()=>{
     console.log('dataFrameChanged');
-    console.log(JSON.stringify(dataFrame));
-    
   }, [dataFrame]) 
   return (
    <DataFrameContext.Provider value = {dataFrame}>

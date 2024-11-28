@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./ModifySections.css"
 
-const ModifySections = ({returnedDataFrame, dbUpdateTrigger}) =>{
+const ModifySections = ({returnedDataFrame, dbUpdateTrigger, dataSrc}) =>{
     const [currentData, setCurrentData] = useState(null);
     const [selecterdModOption, setSelectedModOption] = useState("a");
     const [modifiedData, setModifiedData] = useState({});
@@ -29,7 +29,7 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger}) =>{
     ]
     const retrieveDataFrame = async () => {
         try {
-          const response = await axios.post("http://127.0.0.1:5000/api/get_prop", { prop: "Task" });
+          const response = await axios.post(`${dataSrc}api/get_prop`, { prop: "Task" });
     
           if (response.data) {
             const rawData = response.data;
@@ -53,19 +53,16 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger}) =>{
           console.error("Failed to fetch initial data:", error);
         };
     };
-    const updateDataBase = async () => {
+    const updateDataBase = async (modData) => {
         try {
-            if (!modifiedData || Object.keys(modifiedData).length === 0) {
+            if (!modData || Object.keys(modData).length === 0) {
                 alert("No modifications to save.");
                 return;
             }
-    
-            await axios.post('http://127.0.0.1:5000/api/save_prop', {
+            await axios.post(`${dataSrc}api/save_prop`, {
                 prop: 'Task',
-                frame: modifiedData,
+                frame: modData,
             });
-    
-            // Fetch updated data immediately after database update
             await retrieveDataFrame();
             alert("Database updated successfully!");
         } catch (error) {
@@ -73,15 +70,7 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger}) =>{
             alert("Unable to upload modified data: " + error.message);
         }
     };
-    
-    const returnModifiedData = async () =>{
-        try{
-
-        }catch{
-
-        }
-    }
-
+ 
 
     useEffect(()=>{
         retrieveDataFrame();
@@ -103,7 +92,7 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger}) =>{
     
     const vesselOptionSelection = () =>{
         return vesselStatus.map((stat, index) =>{
-            return <option value = {stat} index = {index}> {stat}</option>
+            return <option value = {stat} key = {index}> {stat}</option>
         })
     }
    
@@ -125,11 +114,16 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger}) =>{
         const updatedColumns = [...currentData.columns];
         updatedColumns[index] = modifiedShipName;
         const updatedData = { ...currentData, columns: updatedColumns };
-        console.log(updatedData)
-        setModifiedData(
-            updatedData
-        );
-
+        console.log(modifiedShipName);
+        console.log(updatedData);
+        setModifiedData(updatedData);
+        return updatedData;
+    }
+    const handleComfirmNewVesselNameChange = async ()=>{
+        const updateData = handelNewVesselName();
+        if (updateData){
+            await updateDataBase(updateData);
+        }
     }
 
 
@@ -159,7 +153,7 @@ const ModifySections = ({returnedDataFrame, dbUpdateTrigger}) =>{
                         <div>
                             <select onChange={e => setSelectedShipName(e.target.value)}> {shipNameSelection()} </select>
                             <input placeholder="Input New Vessel Name Here" onChange={e=> setModifiedShipName(e.target.value)}></input>
-                            <button onClick={async()=>{handelNewVesselName(); await updateDataBase();}}>Confirm Change</button>    
+                            <button onClick={handleComfirmNewVesselNameChange}>Confirm Change</button>    
                         </div>
                     </>
                 );

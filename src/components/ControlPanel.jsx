@@ -7,12 +7,21 @@ import ModifySections from "./cp/ModifySections";
 
 const ControlPanel = ({returnDataFrame}) =>{
     const [dbUpdateTrigger, setDbUpdateTrigger] = useState(false);
+    const [dataSrc, setDataSrc] = useState('http://127.0.0.1:5000/');
+    const handelChangeDataSrc = (event)=>{
+        if(event.target.checked){
+            setDataSrc('https://vessel-planner.onrender.com/');
+        }else{
+            setDataSrc('http://127.0.0.1:5000/');
+        }
+    }
     const handleDatabaseUpdate = () => {
         setDbUpdateTrigger((prev) => !prev); 
     };
+    
     const adjustSpacing = (endDate, startDate) =>{
         const durationInDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-        let spaceCount = durationInDays * 9.25; // 6 spaces per day
+        let spaceCount = durationInDays * 9.1; 
         if (durationInDays === 1){
                 spaceCount = 0;
         }else if (durationInDays ===2){
@@ -36,7 +45,8 @@ const ControlPanel = ({returnDataFrame}) =>{
     const handelRefresh = async () => {
         try {
             const prop = 'Task';
-            const response = await axios.post('https://vessel-planner.onrender.com/api/get_prop', { prop: prop });
+            console.log(`Control Panel is using ${dataSrc} as the data source`);
+            const response = await axios.post(`${dataSrc}api/get_prop`, { prop: prop });
             let rawData = null;
     
             if (!response.data) {
@@ -149,7 +159,7 @@ const ControlPanel = ({returnDataFrame}) =>{
                             
                             // Calculate task duration in days
                             const durationInDays = Math.ceil((endTime - startTime) / (1000 * 60 * 60 * 24)); // Convert ms to days
-                            let spaceCount = durationInDays * 9.25; // 6 spaces per day
+                            let spaceCount = durationInDays * 9.1; // 6 spaces per day
                                 if (durationInDays === 1){
                                     spaceCount = 0;
                                 }else if (durationInDays ===2){
@@ -264,15 +274,20 @@ const ControlPanel = ({returnDataFrame}) =>{
                 <QuerySections></QuerySections>
             </div>
             <div className = "create-section">
-                <CreateSections returnDataFrame={returnDataFrame} onDatabaseUpdate={handleDatabaseUpdate}></CreateSections>
+                <CreateSections returnDataFrame={returnDataFrame} onDatabaseUpdate={handleDatabaseUpdate} dataSrc={dataSrc}></CreateSections>
             </div>
             <div className="modify-section">
-                <ModifySections dbUpdateTrigger={dbUpdateTrigger}></ModifySections>
+                <ModifySections dbUpdateTrigger={dbUpdateTrigger} dataSrc={dataSrc}></ModifySections>
             </div>
-            <div className="delete-section">
-             
+            <div className="delete-section"></div>
+            <div className="dev-section">
+                <div className = "dev-section-inner">
+                    <h5 className="dev-h5">DEV PANEL</h5>
+                    <label> <input type="checkbox" onChange={handelChangeDataSrc}></input> Use remote server?</label>
+                    <button onClick={handelRefresh}>Refresh</button>
+                </div>
             </div>
-            <button onClick={handelRefresh} className="control-panel-button"><p>Refresh</p></button>
+          
         </div>
     )
 }
