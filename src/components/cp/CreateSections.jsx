@@ -63,12 +63,12 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
     useEffect(() => {
         const checkAndFetchData = async () => {
             try {
-                console.log(`Upon INitial render, CS is using ${dataSrc}`)
-                const checkResponse = await axios.post(`${dataSrc}api/check_or_create_task_table`);
+                console.log(`Upon INitial render, CS is using https://vessel-planner.onrender.com/`)
+                const checkResponse = await axios.post(`https://vessel-planner.onrender.com/api/check_or_create_task_table`);
                 console.log(checkResponse.data.message);
     
                
-                const response = await axios.post(`${dataSrc}api/get_prop`, { prop: 'Task' });
+                const response = await axios.post(`https://vessel-planner.onrender.com/api/get_prop`, { prop: 'Task' });
     
                 if (response.data) {
                     const rawData = response.data;
@@ -202,8 +202,8 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
     const handleShowAll = async () => {
         try {
             const prop = 'Task';
-            console.log(`Control Panel Using, ${dataSrc} as data source`)
-            const response = await axios.post(`${dataSrc}api/get_prop`, { prop: prop });
+            console.log(`Control Panel Using, https://vessel-planner.onrender.com/ as data source`)
+            const response = await axios.post(`https://vessel-planner.onrender.com/api/get_prop`, { prop: prop });
             let rawData = null;
     
             if (!response.data) {
