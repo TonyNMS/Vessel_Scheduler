@@ -202,6 +202,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
     const handleShowAll = async () => {
         try {
             const prop = 'Task';
+            console.log(`Control Panel Using, ${dataSrc} as data source`)
             const response = await axios.post(`${dataSrc}api/get_prop`, { prop: prop });
             let rawData = null;
     
