@@ -35,7 +35,7 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
     }
     const retrieveDataFrame = async () => {
         try {
-          const response = await axios.post(`${dataSrc}api/get_prop`, { prop: "Task" });
+          const response = await axios.post(`https://vessel-planner.onrender.com/api/get_prop`, { prop: "Task" });
     
           if (response.data) {
             const rawData = response.data;
@@ -65,7 +65,7 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
                 alert("No modifications to save.");
                 return;
             }
-            await axios.post(`${dataSrc}api/save_prop`, {
+            await axios.post(`https://vessel-planner.onrender.com/api/save_prop`, {
                 prop: 'Task',
                 frame: modData,
             });
