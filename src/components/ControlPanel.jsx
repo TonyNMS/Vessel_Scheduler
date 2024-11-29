@@ -34,6 +34,8 @@ const ControlPanel = ({returnDataFrame, filterTime}) =>{
             rgb = "rgb(255, 51, 51)"
         }else if (number ==6){
             rgb = "rgb(182, 148, 136)"
+        }else if (number ==7){
+            rgb = "rgb(204, 204, 0)"
         }
         return rgb
     }
