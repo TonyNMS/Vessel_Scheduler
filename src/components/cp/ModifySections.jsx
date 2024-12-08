@@ -14,7 +14,16 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
     const [modifiedVesselEndStatus, setModifiedEndVesselStatus] = useState("Arrival");
     const [vesselBookingStatus, setVesselBookingStatus] = useState(0);
     
-
+    
+    const planningOptions = [
+        {0 : "Select a Booking Status"},
+        {1 : "Dev"},
+        {2 : "Confirmed"},
+        {3 : "Binding order sent"},
+        {4 : "Contract outstanding"},
+        {5 : "Mantainance/Dry Dock"},
+        {7 : "Plan May Change"}
+    ]
     const modificationOptions = [
         "Chose One of the Following",
         "Change Vessel Name",
@@ -29,7 +38,13 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         "Departure",
         "Arrival"
     ];
-
+    const resetState =() =>{
+        setSelectedShipName("");
+        setSelectedTaskName("");
+        setModifiedShipName("");
+        setModifiedTaskName(""); 
+        setVesselBookingStatus(0);
+    }
     const refreshDatabase = () =>{
         refresh();
     }
@@ -65,7 +80,7 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
                 alert("No modifications to save.");
                 return;
             }
-            await axios.post(`https://vessel-planner.onrender.com/api/get_propapi/save_prop`, {
+            await axios.post(`https://vessel-planner.onrender.com/api/save_prop`, {
                 prop: 'Task',
                 frame: modData,
             });
@@ -98,7 +113,7 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         })
     }
     const shipNameSelection = () => {
-        const defaultOption = <option key = "default" value = "">"Select A ship Name" </option>
+        const defaultOption = <option key = "default" value = "">Select A ship Name</option>
         const otherOptions = currentData.columns.map((option, index) => (                
             <option key={index} value={option}>
                 {option}
@@ -106,6 +121,14 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         ));
         return  [defaultOption, ...otherOptions];
     };
+    const shipBookingStatusSelection = ()=>{
+        const defaultOption = <option key = "default" value = "">Select A Booking Status</option>
+        const otherOptions = planningOptions.map((stat, index)=>{
+            return <option value = {Object.keys(stat)} index = {index}>{Object.values(stat)}</option>
+        })
+        return [defaultOption, ...otherOptions];
+    }
+
     const shipTaskSelection = () =>{
         if (!currentData) return ;
 
@@ -118,7 +141,7 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
                 tasks.add(row[idx].split("£")[0]);
             }
         });
-        console.log(tasks);
+        
         const defaultOptions = <option key="default" value = "">Please Choose a Task</option>
         const otherOptions = [...tasks].map((item, index)=>(
             <option key={index} value={item}>
@@ -191,6 +214,32 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
 
     }
     const handelNewAssignedOccupency =()=>{
+     
+        if (selectedTaskName === ""){
+            alert("An Existing Task Must be Selected To complete the Operation");
+            return;
+        }
+        if (selectedShipName === ""){
+            alert("A Ship Must be Selected to Complete the Operation");
+            return;
+        }
+        if (currentData.columns.indexOf(selectedShipName) === -1){
+            alert("Selected Ship does not Exist in Server");
+            return;
+        }
+        const idx = currentData.columns.indexOf(selectedShipName);
+        const newData = [...currentData.data];
+        newData.map((item)=> {
+            if (item[idx] !== null){
+                const curDataDetail = item[idx].split("£");
+                if (curDataDetail[0] === selectedTaskName){
+                    item[idx] = `${curDataDetail[0]}£${curDataDetail[1]}£${curDataDetail[2]}£${curDataDetail[3]}£${curDataDetail[4]}£${vesselBookingStatus}£${curDataDetail[6]}£${curDataDetail[7]}£${curDataDetail[8]}£${curDataDetail[9]}£${curDataDetail[10]}`;
+                }
+            }
+        });
+        const newDatFrame = {...currentData, data: newData};
+        setModifiedData(newDatFrame);
+        return newDatFrame;
 
     }
 //=================================Button Interface================================================
@@ -204,6 +253,12 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         const updateData = handelNewTaskName();
         if (updateData){
             await updateDataBase(updateData);
+        }
+    }
+    const handleComfirmNewAssignedOccupency = async()=>{
+        const updatedData = handelNewAssignedOccupency();
+        if(updatedData){
+            await updateDataBase(updatedData);
         }
     }
 //=================================================================================
@@ -272,6 +327,9 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
                         <div>
                             <select onChange={e => setSelectedShipName(e.target.value)}> {shipNameSelection()} </select>
                             <select onChange={e => setSelectedTaskName(e.target.value)}>{shipTaskSelection()}</select>
+                            <select onChange={e => setVesselBookingStatus(e.target.value)}>{shipBookingStatusSelection()}</select>
+                            <button onClick= {handleComfirmNewAssignedOccupency}>Confirm Change</button>
+                            <button onClick ={refreshDatabase}>Refresh</button>
                         </div>
                     </>
                 );

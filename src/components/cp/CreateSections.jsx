@@ -33,7 +33,6 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
         {3 : "Binding order sent"},
         {4 : "Contract outstanding"},
         {5 : "Mantainance/Dry Dock"},
-        {6 : "Vessel Charted By OSE"},
         {7 : "Plan May Change"}
     ]
     const vesselStatus = [
