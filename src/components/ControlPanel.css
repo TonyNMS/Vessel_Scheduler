@@ -17,7 +17,7 @@
     top: 10px;
     height: 20vh;
     width: 24.4vw;
-    border: 1px solid red;
+    border: 1px solid rgb(245, 245, 245);
     display: flex;
     justify-content: center;
 }
@@ -31,7 +31,7 @@
     
     display: flex;
     justify-content: center;
-    border: 1px solid rgb(111, 0, 255);
+    border: 1px solid rgb(255, 255, 255);
 }
 .modify-section{
     position: absolute;
@@ -42,7 +42,7 @@
     width: 24.4vw;
     display: flex;
     justify-content: center;
-    border: 1px solid rgb(21, 255, 0);
+    border: 1px solid rgb(255, 255, 255);
 }
 .delete-section{
     position:absolute;
@@ -53,7 +53,7 @@
     width: 24.4vw;
     display: flex;
     justify-content: center;
-    border: 1px solid rgb(0, 255, 195);
+    border: 1px solid rgb(255, 255, 255);
 }
 .control-panel-button{
     position:absolute;

@@ -66,7 +66,7 @@ const ControlPanel = ({returnDataFrame, filterTime}) =>{
         try {
             const prop = 'Task';
             console.log(`Control Panel is using ${dataSrc} as the data source`);
-            const response = await axios.post(`${dataSrc}api/get_prop`, { prop: prop });
+            const response = await axios.post(`https://vessel-planner.onrender.com/api/get_prop`, { prop: prop });
             let rawData = null;
     
             if (!response.data) {
@@ -201,8 +201,7 @@ const ControlPanel = ({returnDataFrame, filterTime}) =>{
             <div className="dev-section">
                 <div className = "dev-section-inner">
                     <h5 className="dev-h5">DEV PANEL</h5>
-                    <label> <input type="checkbox" onChange={handelChangeDataSrc}></input> Use Server?</label>
-                    <button onClick={handelRefresh}>Refresh</button>
+                    <button onClick={handelRefresh}>Load Current Database</button>
                 </div>
             </div>
           

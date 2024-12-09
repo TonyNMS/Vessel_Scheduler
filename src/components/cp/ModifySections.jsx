@@ -122,11 +122,11 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         return  [defaultOption, ...otherOptions];
     };
     const shipBookingStatusSelection = ()=>{
-        const defaultOption = <option key = "default" value = "">Select A Booking Status</option>
+       
         const otherOptions = planningOptions.map((stat, index)=>{
             return <option value = {Object.keys(stat)} index = {index}>{Object.values(stat)}</option>
         })
-        return [defaultOption, ...otherOptions];
+        return [otherOptions];
     }
 
     const shipTaskSelection = () =>{
