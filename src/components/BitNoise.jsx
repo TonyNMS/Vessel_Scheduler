@@ -85,9 +85,12 @@ function BitNoise({plottingData, startTimeFileter, endTimeFilter}) {
   const [endDate, setEndDate] = useState(""); 
   const handleTileClick = (data) => {
     console.log(data);
-    const cleanedParts = data.description.replace(/-/g, "").split(/(?<=Dep:Cux)/);
+    const cleanedParts = data.description.replace(/-/g, "").split(/(?<!:)(?=Cux|Esb|Sas|Rød|Emd|Büs|UK|Han|NONE|Dep|Arr|Sail|Dry Dock)/);
+    
     const departure = cleanedParts[0].trim();
-    const arrival = cleanedParts[1]?.trim().split(":")[1] + ":"+ cleanedParts[1]?.trim().split(":")[0];
+    const arrival = cleanedParts[1].trim().split(":")[1] + ":" + cleanedParts[1].trim().split(":")[0];
+    console.log(departure);
+    console.log(arrival);
     const taskScope = data.id.split(";")[1];
     const taskClient = data.id.split(";")[2];
     const taskMaster = data.id.split(";")[3];
