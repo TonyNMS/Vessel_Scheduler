@@ -186,7 +186,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
         try {
             setIsLoading(true); 
             console.log(frame);
-            await axios.post(`${dataSrc}api/save_prop`, {
+            await axios.post(`https://vessel-planner.onrender.com/api/save_prop`, {
               prop: 'Task',
               frame: frame,
             });
@@ -317,7 +317,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
 
         try {
             setIsLoading(true); // Show a loading spinner or similar feedback
-            await axios.post(`${dataSrc}api/save_prop`, {
+            await axios.post(`https://vessel-planner.onrender.com/api/save_prop`, {
               prop: 'Task',
               frame: frame2,
             });
