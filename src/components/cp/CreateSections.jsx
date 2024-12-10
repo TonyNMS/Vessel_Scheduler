@@ -35,38 +35,16 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
         {5 : "Mantainance/Dry Dock"},
         {7 : "Plan May Change"}
     ]
-    const vesselStatus = [
-        "Dep",
-        "Sail",
-        "Arr",
-        "Dry Dock"
-    ]
-    const crewStatus = [
-        "Full Crew",
-        "Half Crew",
-        "Partly Manned",
-        "NONE"
-    ]
-    const dockPorts = [
-        "Choose A Port",
-        "Esb",
-        "Cux",
-        "Sas",
-        "Rød",
-        "Emd",
-        "Büs",
-        "Han",
-        "UK",
-        "NONE"
-    ]
+    const vesselStatus = ["Dep","Sail","Arr","Dry Dock"]
+    const crewStatus = ["Full Crew","Half Crew","Partly Manned","NONE"]
+    const dockPorts = ["Choose A Port","Esb","Cux","Sas","Rød","Emd","Büs","Han","UK","NONE"]
     useEffect(() => {
         const checkAndFetchData = async () => {
             try {
                 console.log(`Upon INitial render, CS is using https://vessel-planner.onrender.com/`)
                 const checkResponse = await axios.post(`https://vessel-planner.onrender.com/api/check_or_create_task_table`);
                 console.log(checkResponse.data.message);
-    
-               
+
                 const response = await axios.post(`https://vessel-planner.onrender.com/api/get_prop`, { prop: 'Task' });
     
                 if (response.data) {
@@ -352,40 +330,138 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
 
     return (
         <div className="cs-options-sections">
-                <div>
-                    <input type="text" placeholder="Ship Name" value={shipName} className="input_createSection" onChange={e => setShipName(e.target.value)} />
-                    <input type="text" placeholder="Task Name" value={taskName} className="input_createSection" onChange={e => setTaskName(e.target.value)} />
+            <div className="form-columns">
+                <div className="form-column">
+                <input
+                    type="text"
+                    placeholder="Ship Name"
+                    value={shipName}
+                    className="input_createSection"
+                    onChange={(e) => setShipName(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Task Name"
+                    value={taskName}
+                    className="input_createSection"
+                    onChange={(e) => setTaskName(e.target.value)}
+                />
+                <input
+                    type="date"
+                    placeholder="Start Time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                />
+                <input
+                    type="date"
+                    placeholder="End Time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Task Scope"
+                    value={scope}
+                    className="input_createSection"
+                    onChange={(e) => setScope(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Client Name"
+                    value={client}
+                    className="input_createSection"
+                    onChange={(e) => setClient(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Master of the Task"
+                    value={master}
+                    className="input_createSection"
+                    onChange={(e) => setMaster(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Job Code"
+                    value={jobCode}
+                    className="input_createSection"
+                    onChange={(e) => setJobCode(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Comment"
+                    value={comment}
+                    className="input_createSection"
+                    onChange={(e) => setComment(e.target.value)}
+                />
                 </div>
-                <div>
-                    <input type="date" placeholder="Start Time" value={startTime} onChange={e => setStartTime(e.target.value)} />
-                    <input type="date" placeholder="End Time" value={endTime} onChange={e => setEndTime(e.target.value)} />
+
+                <div className="form-column">
+                <select
+                    onChange={(e) => setVesselStatsBegin(e.target.value)}
+                    className="long-select"
+                >
+                    {vesselOptionSelection()}
+                </select>
+                <select
+                    onChange={(e) => setStartPort(e.target.value)}
+                    className="long-select"
+                >
+                    {vesselPortOptionSelection()}
+                </select>
+                <select
+                    onChange={(e) => setVesselStatsEnd(e.target.value)}
+                    className="long-select"
+                >
+                    {vesselOptionSelection()}
+                </select>
+                <select
+                    onChange={(e) => setEndPort(e.target.value)}
+                    className="long-select"
+                >
+                    {vesselPortOptionSelection()}
+                </select>
+                <select
+                    onChange={(e) => setBookingStatus(e.target.value)}
+                    className="long-select"
+                >
+                    {planningStatusSelection()}
+                </select>
+                <select
+                    onChange={(e) => setCrew(e.target.value)}
+                    className="long-select"
+                >
+                    {vesselCrewOptionSelction()}
+                </select>
                 </div>
-                <div>
-                    <select onChange={e => setVesselStatsBegin(e.target.value)}>{vesselOptionSelection()}</select>
-                    <select onChange={e => setStartPort(e.target.value)}>{vesselPortOptionSelection()}</select>
-                    <select onChange={e => setVesselStatsEnd(e.target.value)}>{vesselOptionSelection()}</select>
-                    <select onChange={e => setEndPort(e.target.value)}>{vesselPortOptionSelection()}</select>
-                </div>
-                <div>
-                    <input type="text" placeholder='Task Scope' value = {scope} className='input_createSection' onChange={e => setScope(e.target.value)}></input>
-                    <input type="text" placeholder='Client Name' value = {client} className='input_createSection' onChange={e => setClient(e.target.value)}></input>
-                </div>
-                <div>
-                    <input type="text" placeholder='Master of the Task' value = {master} className='input_createSection' onChange={e => setMaster(e.target.value)}></input>
-                    <select onChange={e=>setBookingStatus(e.target.value)}>{planningStatusSelection()}</select>
-                    <select onChange={e=> setCrew(e.target.value)}>{vesselCrewOptionSelction()}</select>
-                </div>
-                <div>
-                    <input type="text" placeholder='Job Code' value = {jobCode} className='input_createSection' onChange={e => setJobCode(e.target.value)}></input>
-                    <input type="text" placeholder='Comment' value = {comment} className='input_createSection' onChange={e => setComment(e.target.value)}></input>
-                </div>
-                <div>
-                    <button onClick={async () =>{ handleAddTask(); await handleSubmit();}} className="cs_button">Confirm Input</button>
-                    <button onClick={async () => {handleAddTask(); await handleSubmit(); await handleShowAll();}}>Refresh</button> 
-                    <button onClick={resetDevDaraBase} className="cs_button">Reset</button>
-                    {isLoading && <div className="spinner">Loading...</div>}
-                </div>
+            </div>
+
+            <div className="button-section">
+                <button
+                onClick={async () => {
+                    handleAddTask();
+                    await handleSubmit();
+                }}
+                className="cs_button"
+                >
+                Confirm Input
+                </button>
+                <button
+                onClick={async () => {
+                    handleAddTask();
+                    await handleSubmit();
+                    await handleShowAll();
+                }}
+                className="cs_button"
+                >
+                Refresh
+                </button>
+                <button onClick={resetDevDaraBase} className="cs_button">
+                Reset
+                </button>
+                {isLoading && <div className="spinner">Loading...</div>}
+            </div>
         </div>
+
     );
 }
 
