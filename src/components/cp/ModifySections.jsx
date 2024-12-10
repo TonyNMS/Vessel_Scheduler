@@ -10,6 +10,9 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
     const [modifiedShipName, setModifiedShipName] = useState("");
     const [selectedTaskName, setSelectedTaskName] = useState("");
     const [modifiedTaskName, setModifiedTaskName] = useState("");
+    const [modifiedTaskJobCode, setModifiedJobCode] = useState("");
+    const [modifiedVesselStartPort, setModifiedVesselStartPort] = useState("");
+    const [modifiedVesselendPort, setModifiedVesselEndPort]= useState("");
     const [modifiedVesselStartStatus, setModifiedStartVesselStatus] = useState("Departure");
     const [modifiedVesselEndStatus, setModifiedEndVesselStatus] = useState("Arrival");
     const [vesselBookingStatus, setVesselBookingStatus] = useState(0);
@@ -28,8 +31,6 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
         "Chose One of the Following",
         "Change Vessel Name",
         "Change Task Name",
-        "Change Task Duration",
-        "Change Task Port",
         "Change Task Detail",
         "Change Booking Status"
     ];
@@ -95,6 +96,10 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
             setSelectedTaskName("");
             setModifiedShipName("");
             setModifiedTaskName("");
+            setModifiedJobCode("");
+            setVesselBookingStatus(0);
+            setModifiedVesselStartPort("");
+            setModifiedVesselEndPort("");
         }
     };
    
@@ -211,6 +216,31 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
 
     }
     const handelNewTaskDetail =()=>{
+        if (selectedTaskName === ""){
+            alert("An Existing Task Must be Selected To complete the Operation");
+            return;
+        }
+        if (selectedShipName === ""){
+            alert("A Ship Must be Selected to Complete the Operation");
+            return;
+        }
+        if (currentData.columns.indexOf(selectedShipName) === -1){
+            alert("Selected Ship does not Exist in Server");
+            return;
+        }
+        const idx = currentData.columns.indexOf(selectedShipName);
+        const newData = [...currentData.data];
+        newData.map((item)=> {
+            if (item[idx] !== null){
+                const curDataDetail = item[idx].split("£");
+                if (curDataDetail[0] === selectedTaskName){
+                    item[idx] = `${curDataDetail[0]}£${curDataDetail[1]}£${curDataDetail[2]}£${curDataDetail[3]}£${curDataDetail[4]}£${curDataDetail[5]}£${curDataDetail[6]}£${curDataDetail[7]}£${curDataDetail[8]}£${curDataDetail[9]}£${modifiedTaskJobCode}`;
+                }
+            }
+        });
+        const newDatFrame = {...currentData, data: newData};
+        setModifiedData(newDatFrame);
+        return newDatFrame;
 
     }
     const handelNewAssignedOccupency =()=>{
@@ -257,6 +287,12 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
     }
     const handleComfirmNewAssignedOccupency = async()=>{
         const updatedData = handelNewAssignedOccupency();
+        if(updatedData){
+            await updateDataBase(updatedData);
+        }
+    }
+    const handleComfirmedNewTaskDetail = async()=>{
+        const updatedData = handelNewTaskDetail();
         if(updatedData){
             await updateDataBase(updatedData);
         }
@@ -318,6 +354,11 @@ const ModifySections = ({refresh, dbUpdateTrigger, dataSrc}) =>{
                     <>
                         <div>
                             <select onChange={e => setSelectedShipName(e.target.value)}> {shipNameSelection()} </select>
+                            <select onChange = {(e) => setSelectedTaskName(e.target.value)}>{shipTaskSelection()}</select>
+                            <input placeholder ="Input New Task Job Code" onChange = {e=>setModifiedJobCode(e.target.value)}></input>
+                            <button onClick = {handleComfirmedNewTaskDetail}>Confirm Input</button>
+                            <button onClick={refreshDatabase}>Refresh</button>
+
                         </div>
                     </>
                 );
