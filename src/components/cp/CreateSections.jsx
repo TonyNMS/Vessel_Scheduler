@@ -162,7 +162,7 @@ function CreateSections({returnDataFrame, onDatabaseUpdate, dataSrc}) {
             newColumns.push(shipName);
         }
         const shipIndex = newColumns.indexOf(shipName);
-        let taskInforDetailed = `${taskName}£${vesselStatsBegin}£${vesselStatsBegin === "On Sea"? "NONE":startPort}£${vesselStatsEnd}£${endPort === "On Sea"? "NONE":endPort}£${bookingStatus}£${scope}£${client===""? "NONE":client}£${master==="" ? "NONE":master}£${crew==="" ? "NONE":crew}£${jobCode===""? "NONE":jobCode}`;
+        let taskInforDetailed = `${taskName}£${vesselStatsBegin}£${vesselStatsBegin === "On Sea"? "DNE":startPort}£${vesselStatsEnd}£${endPort === "On Sea"? "DNE":endPort}£${bookingStatus}£${scope}£${client===""? "NONE":client}£${master==="" ? "NONE":master}£${crew==="" ? "NONE":crew}£${jobCode===""? "NONE":jobCode}`;
         newIndex.forEach((date, idx) => {
             if (date >= startTime && date <= endTime) {
                 newData[idx][shipIndex] = taskInforDetailed;

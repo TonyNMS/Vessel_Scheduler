@@ -189,7 +189,7 @@ const ControlPanel = ({returnDataFrame, filterTime}) =>{
     return(
         <div className="control-panel-container">
             <div className="query-section">
-                <QuerySections filterTime={filterTime}></QuerySections>
+                <QuerySections filterTime={filterTime} displayAll={handelRefresh}></QuerySections>
             </div>
             <div className = "create-section">
                 <CreateSections returnDataFrame={returnDataFrame} onDatabaseUpdate={handleDatabaseUpdate} dataSrc={dataSrc}></CreateSections>

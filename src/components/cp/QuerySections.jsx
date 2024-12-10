@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./QuerySections.css";
-const QuerySections = ({filterTime})=>{
+const QuerySections = ({filterTime, displayAll})=>{
     const [data, setData] = useState({});
     const [selectedFilter, setSelectedFilter] = useState("");
     const [fStart, setFStart] = useState("")
@@ -23,10 +23,10 @@ const QuerySections = ({filterTime})=>{
     const filterOptions = [
         "Select a Filter",
         "Show All Scheduels",
-        "Filter Events by Ship & Time",
+       
         "Filter Events by Time",
-        "Filter Events by Ships",
-        "Filter Events by Task Name",
+       
+       
     ]
     const handelChange = (e) =>{
        setSelectedFilter(e);
@@ -40,7 +40,7 @@ const QuerySections = ({filterTime})=>{
             case "Show All Scheduels":
                 return (
                     <>
-                        <button>Display All</button>;
+                        <button onClick = {displayAll}>Display All</button>;
                     </>
                 );
             case "Filter Events by Ship & Time":
