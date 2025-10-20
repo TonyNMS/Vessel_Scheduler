@@ -66,6 +66,7 @@ const ControlPanel = ({returnDataFrame, filterTime}) =>{
         try {
             const prop = 'Task';
             console.log(`Control Panel is using ${dataSrc} as the data source`);
+            
             const response = await axios.post(`https://vessel-planner.onrender.com/api/get_prop`, { prop: prop });
             let rawData = null;
     
@@ -183,6 +184,20 @@ const ControlPanel = ({returnDataFrame, filterTime}) =>{
             alert("Unable to receive tasks from the backend: " + error.message);
         }
     };
+    const handleEmptyDatabase = async ()=>{
+            try{
+                const response = await axios.post(`https://vessel-planner.onrender.com/api/empty_database`, { prop: "Task" } );
+                console.log("Received data:", response.data);
+                if(response.data.message){
+                    alert(response.data.message);
+                }else{
+                    alert(response.data.error);
+                }
+            }catch(e){
+                console.error("Error when deleting the database hmmm...", e)
+                alert("Unable to delete all tasks from the backend: " + e.message)
+            }
+    }
 
 
 
@@ -202,6 +217,7 @@ const ControlPanel = ({returnDataFrame, filterTime}) =>{
                 <div className = "dev-section-inner">
                     <h5 className="dev-h5">DEV PANEL</h5>
                     <button onClick={handelRefresh}>Load Current Database</button>
+                    <button onClick={handleEmptyDatabase}>!!!Delete Existing Database!!!</button>
                 </div>
             </div>
           

@@ -9,7 +9,7 @@ const QuerySections = ({filterTime, displayAll})=>{
     const handleShowAllScheduel = async () =>{
         try{
             const prop = 'Task';
-            const response = await axios.post('http://127.0.0.1:5000/api/get_prop', {
+            const response = await axios.post('https://vessel-planner.onrender.com/api/get_prop', {
                 prop: prop
             })
             console.log(response.data);
